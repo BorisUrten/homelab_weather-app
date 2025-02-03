@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: weather-app
-          image: ${urten}/weather-app:latest
+          image: urten/weather-app:latest
           imagePullPolicy: Always
           env:
             - name: WEATHER_API_KEY

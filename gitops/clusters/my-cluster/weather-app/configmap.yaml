@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: weather-app-config
-  namespace: weather-app
-data:
-  CITY: "Mississauga"
-  UPDATE_INTERVAL: "300"
-  LOG_LEVEL: "INFO"

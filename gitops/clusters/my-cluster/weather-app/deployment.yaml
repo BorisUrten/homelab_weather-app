@@ -13,6 +13,8 @@ spec:
       labels:
         app: weather-app
     spec:
+      imagePullSecrets:  # 👈 Add this section
+        - name: regcred  # 👈 This should match the secret name you created
       containers:
         - name: weather-app
           image: urten/weather-app:latest

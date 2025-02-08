@@ -4,5 +4,5 @@ metadata:
   name: weather-app-config
   namespace: weather-app
 data:
-  CITY: "your-city-name"
+  CITY: "Mississauga"
   UPDATE_INTERVAL: "300"  # or whatever interval you want in seconds

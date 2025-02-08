@@ -37,11 +37,7 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: password
-            - name: CITY
-              valueFrom:
-                configMapKeyRef:
-                  name: weather-app-config
-                  key: CITY
+            
             - name: UPDATE_INTERVAL
               valueFrom:
                 configMapKeyRef:

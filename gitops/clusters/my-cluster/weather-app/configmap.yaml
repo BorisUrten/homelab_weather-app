@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: weather-app-config
+  name: weather-app-config-cfdtdch9c5
   namespace: weather-app
 data:
   CITY: "Mississauga"

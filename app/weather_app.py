@@ -40,7 +40,9 @@ class WeatherDB:
                     temperature FLOAT NOT NULL,
                     humidity FLOAT,
                     pressure FLOAT,
-                    timestamp TIMESTAMP NOT NULL
+                    timestamp TIMESTAMP NOT NULL,
+                    city VARCHAR(100) NOT NULL,
+                    country VARCHAR(100) NOT NULL
                 );
             ''')
             
@@ -63,16 +65,18 @@ class WeatherDB:
             
             cur.execute(
                 '''INSERT INTO weather_data 
-                   (temperature, humidity, pressure, timestamp) 
-                   VALUES (%s, %s, %s, %s)''',
+                   (temperature, humidity, pressure, timestamp, city, country) 
+                   VALUES (%s, %s, %s, %s, %s, %s)''',
                 (data['temperature'], 
                  data.get('humidity'), 
                  data.get('pressure'), 
-                 data['timestamp'])
+                 data['timestamp'],
+                 data['city'],
+                 data['country'])
             )
             
             conn.commit()
-            logger.info("Weather data stored successfully")
+            logger.info(f"Weather data stored successfully for {data['city']}, {data['country']}")
         except Exception as e:
             logger.error(f"Failed to store weather data: {e}")
             raise
@@ -87,11 +91,13 @@ class WeatherAPI:
         self.api_key = os.getenv('WEATHER_API_KEY')
         if not self.api_key:
             raise ValueError("WEATHER_API_KEY environment variable is not set")
-        self.city = os.getenv('CITY', 'London')
+        self.city = os.getenv('CITY', 'Mississauga')
+        self.country = os.getenv('COUNTRY', 'Canada')
+        self.location = f"{self.city},{self.country}"
 
     def get_weather_data(self):
         """Fetch weather data from WeatherAPI.com"""
-        url = f"http://api.weatherapi.com/v1/current.json?key={self.api_key}&q={self.city}"
+        url = f"http://api.weatherapi.com/v1/current.json?key={self.api_key}&q={self.location}"
         try:
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -101,7 +107,9 @@ class WeatherAPI:
                 'temperature': data['current']['temp_c'],
                 'humidity': data['current']['humidity'],
                 'pressure': data['current']['pressure_mb'],
-                'timestamp': datetime.now()
+                'timestamp': datetime.now(),
+                'city': self.city,
+                'country': self.country
             }
         except requests.exceptions.RequestException as e:
             logger.error(f"Failed to fetch weather data: {e}")
@@ -114,13 +122,14 @@ def main():
         weather_db.init_db()
         weather_api = WeatherAPI()
         
-        logger.info(f"Starting weather data collection for {weather_api.city}")
+        logger.info(f"Starting weather data collection for {weather_api.city}, {weather_api.country}")
         
         while True:
             try:
                 weather_data = weather_api.get_weather_data()
                 if weather_data:
-                    logger.info(f"Temperature: {weather_data['temperature']}°C, "
+                    logger.info(f"Location: {weather_data['city']}, {weather_data['country']}, "
+                              f"Temperature: {weather_data['temperature']}°C, "
                               f"Humidity: {weather_data['humidity']}%, "
                               f"Pressure: {weather_data['pressure']}mb")
                     weather_db.store_weather_data(weather_data)

@@ -8,6 +8,7 @@ namespace: weather-app
 configMapGenerator:
 - literals:
   - CITY=Mississauga
+  - COUNTRY=Canada
   - LOG_LEVEL=INFO
   - UPDATE_INTERVAL=300
   name: weather-app-config

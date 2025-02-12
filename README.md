@@ -24,12 +24,21 @@ weather-monitoring-system/
 │   │   └── my-cluster/              # Your cluster configuration
 │   │       ├── flux-system/         # Flux bootstrap manifests
 │   │       └── weather-app/         # Application manifests
-│   │           ├── namespace.yaml    # Namespace definition
-│   │           ├── secrets.yaml      # Encrypted secrets
-│   │           ├── configmap.yaml    # ConfigMaps
-│   │           ├── postgres.yaml     # PostgreSQL StatefulSet and Service
-│   │           └── deployment.yaml   # Weather app deployment
-│   │
+│   │       |    ├── namespace.yaml    # Namespace definition
+│   │       |    ├── secrets.yaml      # Encrypted secrets
+│   │       |    ├── configmap.yaml    # ConfigMaps
+│   │       |    ├── postgres.yaml     # PostgreSQL StatefulSet and Service
+│   │       |    └── deployment.yaml   # Weather app deployment
+│   │       |---grafana/
+|   |             |--configmap.yaml
+|   |             |--dashboard-config.yaml
+|   |             |--datasource-config.yaml
+|   |             |--deployment.yaml
+|   |             |--grafana-db-secret.yamal
+|   |             |--ingress.yaml
+|   |             |--middleware.yaml
+|   |             |--persistent-volume.yaml
+|   |             |--service.yaml
 │   └── base/                        # Base Kustomize configurations
 │       └── weather-app/
 │           ├── kustomization.yaml

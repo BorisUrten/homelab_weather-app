@@ -1,0 +1,23 @@
+# gitops/clusters/my-cluster/grafana/datasource-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: monitoring
+data:
+  datasources.yaml: |-
+    apiVersion: 1
+    datasources:
+    - name: PostgreSQL
+      type: postgres
+      url: postgres.weather-app.svc.cluster.local:5432
+      database: weather_db
+      user: grafana_reader
+      jsonData:
+        sslmode: "disable"
+        maxOpenConns: 100
+        maxIdleConns: 100
+        connMaxLifetime: 14400
+        postgresVersion: 140
+      secureJsonData:
+        password: "${GRAFANA_DB_PASSWORD}"

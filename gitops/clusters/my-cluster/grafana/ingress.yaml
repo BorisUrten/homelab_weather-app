@@ -1,0 +1,17 @@
+# gitops/clusters/my-cluster/grafana/ingress.yaml
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: PathPrefix(`/grafana`)
+      kind: Rule
+      services:
+        - name: grafana
+          port: 80
+      middlewares:
+        - name: grafana-strip-prefix

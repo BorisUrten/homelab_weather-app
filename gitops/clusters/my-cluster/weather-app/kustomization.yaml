@@ -4,6 +4,7 @@ resources:
 - namespace.yaml
 - postgres.yaml
 - deployment.yaml
+- init-db-configmap.yaml
 namespace: weather-app
 configMapGenerator:
 - literals:

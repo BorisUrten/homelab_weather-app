@@ -46,6 +46,7 @@ kubeconfig
 # Secrets
 *secret*.yaml
 !example-secret.yaml
+!secrets.example.yaml
 
 # Flux
 .flux.yaml

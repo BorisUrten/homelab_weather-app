@@ -17,6 +17,10 @@ spec:
         - name: weather-app
           image: urten/weather-app:latest
           imagePullPolicy: Always
+          ports:
+            - name: health
+              containerPort: 8080
+              protocol: TCP
           env:
             - name: WEATHER_API_KEY
               valueFrom:
@@ -43,6 +47,32 @@ spec:
                 configMapKeyRef:
                   name: weather-app-config
                   key: UPDATE_INTERVAL
+            - name: HEALTH_PORT
+              value: "8080"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: health
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: health
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           resources:
             requests:
               memory: "128Mi"

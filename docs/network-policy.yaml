@@ -1,0 +1,56 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgres-access
+  namespace: weather-app
+spec:
+  # Apply this policy to the Postgres pod
+  podSelector:
+    matchLabels:
+      app: postgres
+  
+  # Policy types to apply
+  policyTypes:
+    - Ingress
+  
+  # Allow ingress traffic from specific sources
+  ingress:
+    # Allow traffic from the weather-app in the same namespace
+    - from:
+        - podSelector:
+            matchLabels:
+              app: weather-app
+      ports:
+        - protocol: TCP
+          port: 5432
+    
+    # Allow traffic from Grafana in the monitoring namespace
+    # Note: Requires monitoring namespace to have label "name: monitoring"
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+      ports:
+        - protocol: TCP
+          port: 5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: weather-app-isolation
+  namespace: weather-app
+spec:
+  podSelector:
+    matchLabels:
+      app: weather-app
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow Prometheus scraping (assuming it runs in monitoring namespace)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+      ports:
+        - protocol: TCP
+          port: 8080

@@ -3,10 +3,11 @@ FROM python:3.9-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies (including curl for health checks)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gcc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better cache utilization
@@ -27,5 +28,9 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Switch to non-root user
 USER weatherapp
 
-# Run the application
-CMD ["python", "weather_app.py"]
+# Expose port for API (can be overridden)
+EXPOSE 8000
+
+# Default command runs the collector
+# This can be overridden in docker-compose.yml or when running the container
+CMD ["python", "collector.py"]

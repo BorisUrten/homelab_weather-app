@@ -30,6 +30,7 @@ ENV/
 .env
 .env.local
 .env.*.local
+.env.docker
 
 # VS Code
 .vscode/
@@ -56,3 +57,12 @@ node_modules/
 
 # Logs
 *.log
+
+# Docker
+docker-compose.override.yml
+
+# Next.js / Frontend
+.next/
+out/
+.vercel/
+*.tsbuildinfo

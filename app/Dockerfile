@@ -33,4 +33,4 @@ EXPOSE 8000
 
 # Default command runs the collector
 # This can be overridden in docker-compose.yml or when running the container
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "api:app", "--timeout", "120"]
+CMD gunicorn -w 4 -b 0.0.0.0:${PORT:-8000} api:app --timeout 120

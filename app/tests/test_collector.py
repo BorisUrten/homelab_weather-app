@@ -78,7 +78,8 @@ class TestWeatherAPI:
     @patch('collector.requests.get')
     def test_get_weather_data_api_error(self, mock_get):
         """Test weather data fetch with API error"""
-        mock_get.side_effect = Exception("API Error")
+        import requests
+        mock_get.side_effect = requests.exceptions.RequestException("API Error")
 
         with patch.dict(os.environ, {
             'WEATHER_API_KEY': 'test_key'

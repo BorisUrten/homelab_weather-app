@@ -35,6 +35,8 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy necessary files from builder
+# Copy necessary files from builder
+# Check if public folder exists before copying
 COPY --from=builder /app/public ./public
 
 # Set correct permissions for prerender cache

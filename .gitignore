@@ -10,7 +10,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/  <-- Commented out to allow frontend/lib
+!frontend/lib/
 lib64/
 parts/
 sdist/

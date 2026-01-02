@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getCurrentWeather, getWeatherStats, type WeatherData, type WeatherStats } from '@/lib/api';
-import { formatTemperature, formatPercentage, formatPressure, formatDate } from '@/lib/utils';
+import { getCurrentWeather, getWeatherStats, type WeatherData, type WeatherStats } from '../lib/api';
+import { formatTemperature, formatPercentage, formatPressure, formatDate } from '../lib/utils';
 import { CloudRain, Droplets, Gauge, RefreshCw, Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';

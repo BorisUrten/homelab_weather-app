@@ -1,0 +1,116 @@
+name: Weather App CI/CD
+
+# 1. THE TRIGGER
+# Run this pipeline whenever code is pushed to the 'main' branch
+# or when a Pull Request is opened against 'main'.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  # Global variables
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+
+jobs:
+  # 2. JOB: TEST BACKEND
+  # "Spin up a Linux computer, install Python, and run my tests"
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r app/requirements.txt
+
+      - name: Run Tests
+        run: |
+          cd app
+          pytest --cov=./ --cov-report=xml
+
+  # 3. JOB: VERIFY FRONTEND
+  # "Spin up a Linux computer, install Node.js, and check if the frontend builds without errors"
+  verify-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Check Build
+        run: |
+          cd frontend
+          npm run build
+
+  # 4. JOB: BUILD & PUBLISH DOCKER IMAGES
+  # Only run this if the tests passed AND it's a push to 'main' (not a PR)
+  docker-publish:
+    needs: [test-backend, verify-frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        # This requires you to set secrets in GitHub (Settings > Secrets)
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build and Push Backend
+      - name: Build and push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./app
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/weather-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Build and Push Frontend
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/weather-frontend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Build and Push Worker
+      - name: Build and push Worker
+        uses: docker/build-push-action@v5
+        with:
+          context: ./app
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/weather-worker:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

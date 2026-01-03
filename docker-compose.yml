@@ -3,9 +3,7 @@ version: '3.8'
 services:
   # Frontend - Next.js Application
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: urten/weather-app:frontend
     ports:
       - "3000:3000"
     environment:
@@ -23,9 +21,7 @@ services:
 
   # Backend API - Flask REST API
   backend:
-    build:
-      context: ./app
-      dockerfile: Dockerfile
+    image: urten/weather-app:backend
     ports:
       - "8000:8000"
     environment:
@@ -52,9 +48,7 @@ services:
 
   # Background Worker - Weather Data Collector
   worker:
-    build:
-      context: ./app
-      dockerfile: Dockerfile
+    image: urten/weather-app:worker
     environment:
       - DATABASE_URL=postgresql://postgres:${DB_PASSWORD:-postgres}@db:5432/weather_db
       - WEATHER_API_KEY=${WEATHER_API_KEY}

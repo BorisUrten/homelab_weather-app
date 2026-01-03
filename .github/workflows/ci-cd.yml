@@ -91,7 +91,7 @@ jobs:
         with:
           context: ./app
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/weather-backend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/weather-app:backend
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -101,7 +101,7 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/weather-frontend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/weather-app:frontend
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -111,6 +111,6 @@ jobs:
         with:
           context: ./app
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/weather-worker:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/weather-app:worker
           cache-from: type=gha
           cache-to: type=gha,mode=max
